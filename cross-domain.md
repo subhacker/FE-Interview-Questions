@@ -82,3 +82,30 @@ document.body.insertBefore(script, document.body.firstChild);
   * 跨文档消息传输(HTML5)：postMessage + onmessage  //兼容性 IE8+
   * WebSocket(HTML5)：new WebSocket(url) + onmessage //兼容性 IE10+
   * 服务器端设置代理请求：服务器端不受同源策略限制
+  
+  
+  jQuery封装的$.ajax中有一个dataType属性，如果将该属性设置成dataType:"jsonp"，就能实现JSONP跨域了。需要了解的一点是，虽然jQuery将JSONP封装在$.ajax中，但是其本质与$.ajax不一样。
+  $.ajax({
+                async : true,
+                url : "https://api.douban.com/v2/book/search",
+                type : "GET",
+                dataType : "jsonp", // 返回的数据类型，设置为JSONP方式
+                jsonp : 'callback', //指定一个查询参数名称来覆盖默认的 jsonp 回调参数名 callback
+                jsonpCallback: 'handleResponse', //设置回调函数名
+                data : {
+                    q : "javascript", 
+                    count : 1
+                }, 
+                success: function(response, status, xhr){
+                    console.log('状态为：' + status + ',状态是：' + xhr.statusText);
+                    console.log(response);
+                }
+            });
+        });
+  
+  
+  利用JQuery getJSON来实现，只要在地址中加上callback=?参数
+  $.getJSON("https://api.douban.com/v2/book/search?q=javascript&count=1&callback=?", function(data){
+                console.log(data);
+            });
+  
