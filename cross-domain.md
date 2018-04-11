@@ -4,6 +4,26 @@
 
 **JSONP：**
 
+就是动态创建<script>标签，然后利用<script>的src 不受同源策略约束来跨域获取数据。
+
+JSONP 由两部分组成：回调函数和数据。回调函数是当响应到来时应该在页面中调用的函数。回调函数的名字一般是在请求中指定的。而数据就是传入回调函数中的 JSON 数据。
+
+
+定义回调函数
+function handleResponse(response){
+    // 对response数据进行操作代码
+}
+
+定义api
+var script = document.createElement("script");
+script.src = "https://api.douban.com/v2/book/search?q=javascript&count=1&callback=handleResponse";
+document.body.insertBefore(script, document.body.firstChild);
+
+ JSONP 是从其他域中加载代码执行。如果其他域不安全，很可能会在响应中夹带一些恶意代码，而此时除了完全放弃 JSONP 调用之外，没有办法追究。因此在使用不是你自己运维的 Web 服务时，一定得保证它安全可靠。
+
+其次，要确定 JSONP 请求是否失败并不容易。虽然 HTML5 给<script>元素新增了一个 onerror事件处理程序，但目前还没有得到任何浏览器支持。为此，开发人员不得不使用计时器检测指定时间内是否接收到了响应。
+
+
 - 原理是：动态插入script标签，通过script标签引入一个js文件，这个js文件载入成功后会执行我们在url参数中指定的函数，并且会把我们需要的json数据作为参数传入
 - 由于同源策略的限制，XmlHttpRequest只允许请求当前源（域名、协议、端口）的资源，为了实现跨域请求，可以通过script标签实现跨域请求，然后在服务端输出JSON数据并执行回调函数，从而解决了跨域的数据请求
 - 优点是兼容性好，简单易用，支持浏览器与服务器双向通信。缺点是只支持GET请求
